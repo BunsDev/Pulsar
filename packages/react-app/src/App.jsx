@@ -48,24 +48,35 @@ const DEBUG = true
 
 //EXAMPLE STARTING JSON:
 const STARTING_JSON = {
-  "description": "It's actually a bison?",
-  "external_url": "https://austingriffith.com/portfolio/paintings/",// <-- this can link to a page for the specific file too
-  "image": "https://austingriffith.com/images/paintings/buffalo.jpg",
-  "name": "Buffalo",
+  "description": "Social functions of the school; education and socialization; social, political, economic and cultural influences on the institutions and practices of education. May be applied towards the certificate in liberal arts.",
+  "external_url": "https://educ240.com/courses/listings/",
+  "image": "https://www.sfu.ca/content/sfu/education/faculty-profiles/cbingham/jcr:content/main_content/image.img.2000.high.jpg/1531244323346.jpg",
+  "name": "EDUC 240",
+  "documents": ['Link to resources'],
   "attributes": [
-     {
-       "trait_type": "BackgroundColor",
-       "value": "green"
-     },
-     {
-       "trait_type": "Eyes",
-       "value": "googly"
-     }
+    {
+      "trait_type": "Instructor",
+      "value": "Charles Bingham"
+    },
+    {
+      "trait_type": "Semester",
+      "value": 'Spring',
+    },
+    {
+      "trait_type": "Location",
+      "value": 'REMOTE LEARNING, Burnaby',
+    },
+    {
+      "trait_type": "Day/Time",
+      "value": 'Th 2:30 PM – 4:20 PM',
+    },    
+    {
+      "trait_type": "TA's",
+      "value": ['Dr. Ajay Kalra', 'Marc Legacy', 'Ngoc Le']
+    },
   ]
 }
 
-//helper function to "Get" from IPFS
-// you usually go content.toString() after this...
 const getFromIPFS = async hashToGet => {
   for await (const file of ipfs.get(hashToGet)) {
     console.log(file.path)
@@ -191,6 +202,8 @@ function App(props) {
 
           const jsonManifestBuffer = await getFromIPFS(ipfsHash)
 
+          console.log('dsjaflkajs', ipfsHash)
+
           try{
             const jsonManifest = JSON.parse(jsonManifestBuffer.toString())
             console.log("jsonManifest",jsonManifest)
@@ -199,8 +212,11 @@ function App(props) {
 
         }catch(e){console.log(e)}
       }
+
       setYourCollectibles(collectibleUpdate)
     }
+
+    console.log(yourCollectibles)
     updateYourCollectibles()
   },[ address, yourBalance ])
 
@@ -291,19 +307,19 @@ function App(props) {
 
         <Menu style={{ textAlign:"center" }} selectedKeys={[route]} mode="horizontal">
           <Menu.Item key="/">
-            <Link onClick={()=>{setRoute("/")}} to="/">YourCollectibles</Link>
+            <Link onClick={()=>{setRoute("/")}} to="/">Courses</Link>
           </Menu.Item>
           <Menu.Item key="/transfers">
             <Link onClick={()=>{setRoute("/transfers")}} to="/transfers">Transfers</Link>
           </Menu.Item>
           <Menu.Item key="/ipfsup">
-            <Link onClick={()=>{setRoute("/ipfsup")}} to="/ipfsup">IPFS Upload</Link>
+            <Link onClick={()=>{setRoute("/ipfsup")}} to="/ipfsup">Create Course</Link>
           </Menu.Item>
           <Menu.Item key="/ipfsdown">
-            <Link onClick={()=>{setRoute("/ipfsdown")}} to="/ipfsdown">IPFS Download</Link>
+            <Link onClick={()=>{setRoute("/ipfsdown")}} to="/ipfsdown">Download Course</Link>
           </Menu.Item>
           <Menu.Item key="/debugcontracts">
-            <Link onClick={()=>{setRoute("/debugcontracts")}} to="/debugcontracts">Debug Contracts</Link>
+            <Link onClick={()=>{setRoute("/debugcontracts")}} to="/debugcontracts">Admin Panel</Link>
           </Menu.Item>
         </Menu>
 
@@ -315,7 +331,7 @@ function App(props) {
                 and give you a form to interact with it locally
             */}
 
-            <div style={{ width:640, margin: "auto", marginTop:32, paddingBottom:32 }}>
+            <div style={{ width:1350, margin: "auto", marginTop:32, paddingBottom:32 }}>
               <List
                 bordered
                 dataSource={yourCollectibles}
@@ -324,13 +340,22 @@ function App(props) {
                   return (
                     <List.Item key={id+"_"+item.uri+"_"+item.owner}>
 
-                      <Card title={(
-                        <div>
-                          <span style={{fontSize:16, marginRight:8}}>#{id}</span> {item.name}
-                        </div>
-                      )}>
-                      <div><img src={item.image} style={{maxWidth:150}} /></div>
-                      <div>{item.description}</div>
+                      <Card 
+                        style={{maxWidth:1000}}
+                        title={(
+                          <div>
+                            <span style={{fontSize:16, marginRight:8}}>#{id}</span> {item.name}
+                          </div>
+                        )}
+                      >
+                        <div><img src={item.image} style={{maxWidth:200}} /></div>
+                        <div>{item.description}</div>
+                        {item.attributes &&
+                          item.attributes.map(({ trait_type, value }) => (
+                            <div key={trait_type}>
+                              {value ? `${trait_type}: ${value}` : null}
+                            </div>
+                        ))}
                       </Card>
 
                       <div>
@@ -482,47 +507,6 @@ function App(props) {
          />
          {faucetHint}
       </div>
-
-      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-         <Row align="middle" gutter={[4, 4]}>
-           <Col span={8}>
-             <Ramp price={price} address={address} networks={NETWORKS}/>
-           </Col>
-
-           <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-             <GasGauge gasPrice={gasPrice} />
-           </Col>
-           <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-             <Button
-               onClick={() => {
-                 window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-               }}
-               size="large"
-               shape="round"
-             >
-               <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                 💬
-               </span>
-               Support
-             </Button>
-           </Col>
-         </Row>
-
-         <Row align="middle" gutter={[4, 4]}>
-           <Col span={24}>
-             {
-               /*  if the local provider has a signer, let's show the faucet:  */
-               faucetAvailable ? (
-                 <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider}/>
-               ) : (
-                 ""
-               )
-             }
-           </Col>
-         </Row>
-       </div>
-
     </div>
   );
 }
