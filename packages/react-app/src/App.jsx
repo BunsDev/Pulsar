@@ -7,6 +7,7 @@ import { Row, Col, Button, Menu, Alert, Input, List, Card, Switch as SwitchD } f
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useUserAddress } from "eth-hooks";
+import { FilePdfOutlined } from "@ant-design/icons";
 import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader } from "./hooks";
 import { Header, Account, Faucet, Ramp, Contract, GasGauge, Address, AddressInput, ThemeSwitch } from "./components";
 import { Transactor } from "./helpers";
@@ -41,7 +42,7 @@ const ipfs = ipfsAPI({host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS['localhost']; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS['rinkeby']; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true
@@ -52,7 +53,7 @@ const STARTING_JSON = {
   "external_url": "https://educ240.com/courses/listings/",
   "image": "https://www.sfu.ca/content/sfu/education/faculty-profiles/cbingham/jcr:content/main_content/image.img.2000.high.jpg/1531244323346.jpg",
   "name": "EDUC 240",
-  "documents": ['Link to resources'],
+  "documents": ['QmfFEpKTRooAzqGr9kgXUdDJfkpAw4XMGkk5MwT1mjLW9n'],
   "attributes": [
     {
       "trait_type": "Instructor",
@@ -348,13 +349,19 @@ function App(props) {
                           </div>
                         )}
                       >
-                        <div><img src={item.image} style={{maxWidth:200}} /></div>
+                        <div>
+                          <img src={item.image} style={{maxWidth:200}} />
+                        </div>
                         <div>{item.description}</div>
                         {item.attributes &&
                           item.attributes.map(({ trait_type, value }) => (
                             <div key={trait_type}>
-                              {value ? `${trait_type}: ${value}` : null}
+                                {value ? `${trait_type}: ${value}` : null}
                             </div>
+                        ))}
+                        {item.documents &&
+                          item.documents.map((hash) => (
+                            <Button type="text" href={`https://ipfs.io/ipfs/${hash}`} target="_blank" icon={<FilePdfOutlined  style={{ fontSize: '24px', color: '#08c' }} />} />
                         ))}
                       </Card>
 
