@@ -45,7 +45,7 @@ const ipfs = ipfsAPI({host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 const targetNetwork = NETWORKS['rinkeby']; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = true
+const DEBUG = false
 
 //EXAMPLE STARTING JSON:
 const STARTING_JSON = {
@@ -57,7 +57,7 @@ const STARTING_JSON = {
   "attributes": [
     {
       "trait_type": "Instructor",
-      "value": "Charles Bingham"
+      "value": "Charles Bingham WOw dude this is cool"
     },
     {
       "trait_type": "Semester",
@@ -202,9 +202,6 @@ function App(props) {
           console.log("ipfsHash",ipfsHash)
 
           const jsonManifestBuffer = await getFromIPFS(ipfsHash)
-
-          console.log('dsjaflkajs', ipfsHash)
-
           try{
             const jsonManifest = JSON.parse(jsonManifestBuffer.toString())
             console.log("jsonManifest",jsonManifest)
@@ -361,7 +358,7 @@ function App(props) {
                         ))}
                         {item.documents &&
                           item.documents.map((hash) => (
-                            <Button type="text" href={`https://ipfs.io/ipfs/${hash}`} target="_blank" icon={<FilePdfOutlined  style={{ fontSize: '24px', color: '#08c' }} />} />
+                            <Button key={hash} type="text" href={`https://ipfs.io/ipfs/${hash}`} target="_blank" icon={<FilePdfOutlined  style={{ fontSize: '24px', color: '#08c' }} />} />
                         ))}
                       </Card>
 
